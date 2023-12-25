@@ -1,5 +1,4 @@
-// components/Movie.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const Movie = () => {
   const [movies, setMovies] = useState([]);
@@ -8,19 +7,13 @@ const Movie = () => {
   const [error, setError] = useState(null);
   const [retryInterval, setRetryInterval] = useState(null);
 
-  useEffect(() => {
-    if (buttonClicked) {
-      fetchMoviesHandler();
-    }
-  }, [buttonClicked]);
-
-  const fetchMoviesHandler = () => {
+  const fetchMoviesHandler = useCallback(() => {
     setIsLoading(true);
     setError(null);
     retryFetchMovies();
-  };
+  }, []);
 
-  const retryFetchMovies = () => {
+  const retryFetchMovies = useCallback(() => {
     const retryDelay = 5000; // Retry after 5 seconds
 
     fetch('https://swapi.dev/api/films/')
@@ -47,17 +40,23 @@ const Movie = () => {
           );
         }
       });
-  };
+  }, [retryInterval]);
 
-  const handleButtonClick = () => {
+  useEffect(() => {
+    if (!buttonClicked) {
+      fetchMoviesHandler();
+    }
+  }, [fetchMoviesHandler, buttonClicked]);
+
+  const handleButtonClick = useCallback(() => {
     setButtonClicked(true);
-  };
+  }, []);
 
-  const handleCancelRetry = () => {
+  const handleCancelRetry = useCallback(() => {
     clearTimeout(retryInterval); // Clear the retry interval
     setRetryInterval(null);
     setError(null); // Remove retrying message on cancel
-  };
+  }, [retryInterval]);
 
   return (
     <div>
@@ -77,7 +76,7 @@ const Movie = () => {
 
       {isLoading && (
         <p>
-          Loading...{' '}
+          Loading...
           {/* <button onClick={handleCancelRetry} className="btn btn-danger">
             Cancel Retry
           </button> */}
