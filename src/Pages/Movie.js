@@ -5,6 +5,8 @@ const Movie = () => {
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
+  const [error, setError] = useState(null);
+  const [retryInterval, setRetryInterval] = useState(null);
 
   useEffect(() => {
     if (buttonClicked) {
@@ -14,6 +16,13 @@ const Movie = () => {
 
   const fetchMoviesHandler = () => {
     setIsLoading(true);
+    setError(null);
+    retryFetchMovies();
+  };
+
+  const retryFetchMovies = () => {
+    const retryDelay = 5000; // Retry after 5 seconds
+
     fetch('https://swapi.dev/api/films/')
       .then(response => response.json())
       .then(data => {
@@ -25,15 +34,29 @@ const Movie = () => {
         }));
         setMovies(transformedMovies);
         setIsLoading(false);
+        setRetryInterval(null); // Reset retry interval on success
       })
-      .catch(error => {
-        console.error('Error fetching movies:', error);
-        setIsLoading(false);
+      .catch(err => {
+        console.error('Error fetching movies:', err);
+        if (!retryInterval) {
+          setError('Something went wrong... Retrying');
+          setRetryInterval(
+            setTimeout(() => {
+              retryFetchMovies();
+            }, retryDelay)
+          );
+        }
       });
   };
 
   const handleButtonClick = () => {
     setButtonClicked(true);
+  };
+
+  const handleCancelRetry = () => {
+    clearTimeout(retryInterval); // Clear the retry interval
+    setRetryInterval(null);
+    setError(null); // Remove retrying message on cancel
   };
 
   return (
@@ -43,7 +66,23 @@ const Movie = () => {
       </button>
       {!buttonClicked && <p>No movies found.</p>}
 
-      {isLoading && <p>Loading...</p>}
+      {error && (
+        <p>
+          {error}{' '}
+          <button onClick={handleCancelRetry} className="btn btn-danger">
+            Cancel Retry
+          </button>
+        </p>
+      )}
+
+      {isLoading && (
+        <p>
+          Loading...{' '}
+          {/* <button onClick={handleCancelRetry} className="btn btn-danger">
+            Cancel Retry
+          </button> */}
+        </p>
+      )}
 
       {!isLoading && movies.length > 0 && (
         <table className="table table-bordered table-striped">
