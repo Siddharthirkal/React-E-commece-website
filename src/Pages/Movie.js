@@ -6,6 +6,11 @@ const Movie = () => {
   const [buttonClicked, setButtonClicked] = useState(false);
   const [error, setError] = useState(null);
   const [retryInterval, setRetryInterval] = useState(null);
+  const [newMovie, setNewMovie] = useState({
+    title: '',
+    openingText: '',
+    releaseDate: '',
+  });
 
   const fetchMoviesHandler = useCallback(() => {
     setIsLoading(true);
@@ -58,8 +63,38 @@ const Movie = () => {
     setError(null); // Remove retrying message on cancel
   }, [retryInterval]);
 
+  const handleInputChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setNewMovie(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  }, []);
+
+  const handleAddMovie = useCallback(() => {
+    console.log(newMovie);
+  }, [newMovie]);
+
   return (
     <div>
+      <form>
+        <div className="mb-3">
+          <label htmlFor="title" className="form-label">Title</label>
+          <input type="text" className="form-control" id="title" name="title" value={newMovie.title} onChange={handleInputChange} />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="openingText" className="form-label">Opening Text</label>
+          <textarea className="form-control" id="openingText" name="openingText" value={newMovie.openingText} onChange={handleInputChange} />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="releaseDate" className="form-label">Release Date</label>
+          <input type="text" className="form-control" id="releaseDate" name="releaseDate" value={newMovie.releaseDate} onChange={handleInputChange} />
+        </div>
+        <button type="button" className="btn btn-primary" onClick={handleAddMovie}>
+          Add Movie
+        </button>
+      </form>
+
       <button onClick={handleButtonClick} className="btn btn-primary my-3">
         Fetch Movies
       </button>
