@@ -1,5 +1,14 @@
-import React from 'react';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Button } from 'react-bootstrap';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+// import ProductCard from './components/ProductCard';
+import Cart from './components/Cart';
+import About from './Pages/About';
+import Home from './Pages/Home';
+import NavBar from './components/NavBar';
+import Products from './components/Products';
+import Movie from './Pages/Movie';
+
 
 const productsArr = [
   {
@@ -8,7 +17,7 @@ const productsArr = [
     imageUrl: 'https://prasadyash2411.github.io/ecom-website/img/Album%201.png',
   },
   {
-    title: 'Black and White Colors',
+    title: 'Black and white Colors',
     price: 50,
     imageUrl: 'https://prasadyash2411.github.io/ecom-website/img/Album%202.png',
   },
@@ -24,29 +33,63 @@ const productsArr = [
   },
 ];
 
-const Product = ({ title, price, imageUrl }) => (
-  <Col md={3} sm={6} xs={12} className="mb-4">
-    <Card>
-      <Card.Img variant="top" src={imageUrl} alt={title} />
-      <Card.Body>
-        <Card.Title>{title}</Card.Title>
-        <Card.Text>${price}</Card.Text>
-        <Button variant="primary">Add to Cart</Button>
-      </Card.Body>
-    </Card>
-  </Col>
-);
-
 const App = () => {
+  const [cartItems, setCartItems] = useState([]);
+  const [showCart, setShowCart] = useState(false);
+
+  const handleCartClick = () => {
+    setShowCart(true);
+  };
+
+  const handleCloseCart = () => {
+    setShowCart(false);
+  };
+
+  const handleAddToCart = (product) => {
+    const existingItemIndex = cartItems.findIndex((item) => item.title === product.title);
+
+    if (existingItemIndex !== -1) {
+      const updatedCartItems = [...cartItems];
+      updatedCartItems[existingItemIndex].quantity += 1;
+      setCartItems(updatedCartItems);
+    } else {
+      setCartItems([...cartItems, { ...product, quantity: 1 }]);
+    }
+  };
+
   return (
-    <Container className="mt-5">
-      <h1 className="mb-4">Products</h1>
-      <Row>
-        {productsArr.map((product, index) => (
-          <Product key={index} {...product} />
-        ))}
-      </Row>
-    </Container>
+    <Router>
+      <Container>
+        <NavBar />
+       
+        {/* <h1 className="mt-5 mb-4">Products</h1>
+        <Row>
+          {productsArr.map((product, index) => (
+            <Col key={index}>
+              <ProductCard product={product} handleAddToCart={handleAddToCart} />
+            </Col>
+          ))}
+        </Row> */}
+        
+
+
+        <Button variant="success" className="position-fixed top-0 end-0 m-4" onClick={handleCartClick}>
+          Cart ({cartItems.reduce((total, item) => total + item.quantity, 0)})
+        </Button>
+
+        <Routes>
+          <Route path="/about" element={<About />} />
+          <Route path="/home" element={<Home />} />
+          <Route
+            path="/products"
+            element={<Products products={productsArr} handleAddToCart={handleAddToCart} />}
+          />
+          <Route path="/movie" element={<Movie/>} />
+        </Routes>
+
+        {showCart && <Cart cartItems={cartItems} handleClose={handleCloseCart} />}
+      </Container>
+    </Router>
   );
 };
 
