@@ -12,16 +12,20 @@ const Movie = () => {
   const retryFetchMovies = useCallback(() => {
     const retryDelay = 5000; // Retry after 5 seconds
 
-    fetch('https://swapi.dev/api/films/')
+    fetch('https://react-http-10007-default-rtdb.firebaseio.com/movies.json')
       .then(response => response.json())
       .then(data => {
-        const transformedMovies = data.results.map(movieData => ({
-          id: movieData.episode_id,
-          title: movieData.title,
-          openingText: movieData.opening_crawl,
-          releaseDate: movieData.release_date
-        }));
-        setMovies(transformedMovies);
+        const loadedMovies = [];
+
+        for (const key in data) {
+          loadedMovies.push({
+            id: key,
+            title: data[key].title,
+            openingText: data[key].openingText,
+            releaseDate: data[key].releaseDate,
+          });
+        }
+        setMovies(loadedMovies);
         setIsLoading(false);
         setRetryInterval(null); // Reset retry interval on success
       })
@@ -54,10 +58,59 @@ const Movie = () => {
     setError(null); // Remove retrying message on cancel
   }, [retryInterval]);
 
-  const handleAddMovie = useCallback(movie => {
-    console.log(movie);
-    // You can add logic to update the movie list or perform other actions.
-  }, []);
+  const handleAddMovie = useCallback(async (movie) => {
+    try {
+      // Send a POST request to add the new movie
+      const response = await fetch('https://react-http-10007-default-rtdb.firebaseio.com/movies.json', {
+        method: 'POST',
+        body: JSON.stringify(movie),
+        headers: {
+          'Content-type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add movie');
+      }
+
+      // Retrieve the updated list of movies after adding a new one
+      const updatedMoviesResponse = await fetch('https://react-http-10007-default-rtdb.firebaseio.com/movies.json');
+      const updatedMoviesData = await updatedMoviesResponse.json();
+
+      if (updatedMoviesData && typeof updatedMoviesData === 'object') {
+        const updatedMovies = Object.keys(updatedMoviesData).map((key) => ({
+          id: key,
+          ...updatedMoviesData[key],
+        }));
+
+        // Update the state with the new list of movies
+        setMovies(updatedMovies);
+      }
+
+      // Log the added movie
+      console.log('New Movie:', movie);
+    } catch (error) {
+      console.error('Error adding movie:', error);
+    }
+  }, [setMovies]);
+
+  const handleDeleteMovie = useCallback(async (id) => {
+    try {
+      // Send a DELETE request to remove the movie
+      const response = await fetch(`https://react-http-10007-default-rtdb.firebaseio.com/movies/${id}.json`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete movie');
+      }
+
+      // Update the state by removing the deleted movie
+      setMovies((prevMovies) => prevMovies.filter((movie) => movie.id !== id));
+    } catch (error) {
+      console.error('Error deleting movie:', error);
+    }
+  }, [setMovies]);
 
   useEffect(() => {
     if (!buttonClicked) {
@@ -102,6 +155,7 @@ const Movie = () => {
               <th>Title</th>
               <th>Opening Text</th>
               <th>Release Date</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -111,6 +165,14 @@ const Movie = () => {
                 <td>{movie.title}</td>
                 <td>{movie.openingText}</td>
                 <td>{movie.releaseDate}</td>
+                <td>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => handleDeleteMovie(movie.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
