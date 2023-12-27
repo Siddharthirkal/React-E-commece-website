@@ -8,6 +8,7 @@ import Home from './Pages/Home';
 import NavBar from './components/NavBar';
 import Products from './components/Products';
 import Movie from './Pages/Movie';
+import ContactUs from './Pages/ContactUs';
 
 
 const productsArr = [
@@ -71,7 +72,7 @@ const App = () => {
           ))}
         </Row> */}
         
-
+        
 
         <Button variant="success" className="position-fixed top-0 end-0 m-4" onClick={handleCartClick}>
           Cart ({cartItems.reduce((total, item) => total + item.quantity, 0)})
@@ -85,6 +86,7 @@ const App = () => {
             element={<Products products={productsArr} handleAddToCart={handleAddToCart} />}
           />
           <Route path="/movie" element={<Movie/>} />
+          <Route path='contactus' element={<ContactUs/>} />
         </Routes>
 
         {showCart && <Cart cartItems={cartItems} handleClose={handleCloseCart} />}
