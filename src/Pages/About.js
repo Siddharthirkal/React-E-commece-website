@@ -21,7 +21,7 @@ Odio recusandae repudiandae repellendus corporis perferendis maxime magni modi l
       <div className="mx-5">The Generics</div>
       <div  className="d-flex flex-x justify-content-between mx-5">
       
-        <a href="https//www.youtube.com"><img src="https://prasadyash2411.github.io/ecom-website/img/6260efc8fc9a9002669d2f4ad9956cc0.jpg" style={{width:'2rem',marginRight:'100px'}}></img></a>
+        <a href="https://www.youtube.com/"><img src="https://prasadyash2411.github.io/ecom-website/img/6260efc8fc9a9002669d2f4ad9956cc0.jpg" style={{width:'2rem',marginRight:'100px'}}></img></a>
 
         <a href="https//www.facebook.com" ><img src="https://prasadyash2411.github.io/ecom-website/img/Facebook%20Logo.png" style={{width:'2rem',marginRight:'200px'}}></img></a>
       </div>
