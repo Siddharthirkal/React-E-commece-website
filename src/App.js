@@ -10,6 +10,9 @@ import Products from './components/Products';
 import Movie from './Pages/Movie';
 import ContactUs from './Pages/ContactUs';
 import ProductDetail from './components/ProductDetail';
+import AuthForm from './components/AuthForm';
+import ProfileForm from './components/ProfileForm';
+import HomePage from './Pages/HomePage';
 
 export const productsArr = [
   {
@@ -81,12 +84,15 @@ const App = () => {
         </Button>
 
         <Routes>
+          <Route path="/" element={<HomePage />}/>
           <Route path="/about" element={<About />} />
           <Route path="/home" element={<Home />} />
           <Route path="/products" element={<Products products={productsArr} handleAddToCart={handleAddToCart} />} />
           <Route path="/products/:productId" element={<ProductDetail products={productsArr} />} />
           <Route path="/movie" element={<Movie />} />
           <Route path="/contactus" element={<ContactUs />} />
+          <Route path="/auth" element={<AuthForm />} />
+          <Route path="/profile" element={<ProfileForm />} />
         </Routes>
 
         {showCart && <Cart cartItems={cartItems} handleClose={handleCloseCart} />}
