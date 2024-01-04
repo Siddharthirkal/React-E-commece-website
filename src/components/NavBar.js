@@ -1,10 +1,15 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from '../store/auth-context';
 
 const NavBar = () => {
   const authCtx = useContext(AuthContext);
   const isLoggedIn = authCtx.isLoggedIn;
+  const nagivate = useNavigate();
+  const logoutHandler = () => {
+    authCtx.logout();
+    nagivate('/auth');
+  };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -33,7 +38,7 @@ const NavBar = () => {
                   <Link to="/profile" className="nav-link">Profile</Link>
                 </li>
                 <li className="nav-item">
-                  <button className="btn btn-outline-danger">Logout</button>
+                  <button className="btn btn-outline-danger" onClick={logoutHandler}>Logout</button>
                 </li>
               </React.Fragment>
             ) : (
