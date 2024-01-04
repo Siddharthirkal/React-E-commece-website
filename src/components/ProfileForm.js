@@ -1,9 +1,11 @@
 import { useRef, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import classes from './ProfileForm.module.css';
 import AuthContext from '../store/auth-context';
 
 const ProfileForm = () => {
+  const navigate = useNavigate();
   const newPasswordInputRef = useRef();
   const authCtx = useContext(AuthContext);
 
@@ -26,6 +28,7 @@ const ProfileForm = () => {
       }
     }).then(res => {
       //assumption: always succeeds!
+      navigate('/');
     });
   };
 
