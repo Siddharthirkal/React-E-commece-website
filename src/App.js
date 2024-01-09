@@ -19,7 +19,7 @@ import AuthForm from "./components/AuthForm";
 import ProfileForm from "./components/ProfileForm";
 import HomePage from "./Pages/HomePage";
 import AuthContext from "./store/auth-context";
-import UserProfile from "./components/UserProfile";
+
 
 export const productsArr = [
   {
@@ -89,13 +89,13 @@ const App = () => {
           ))}
         </Row>
 
-        <Button
+        {/* <Button
           variant="success"
           className="position-fixed top-0 end-0 m-4"
           onClick={handleCartClick}
         >
           Cart ({cartItems.reduce((total, item) => total + item.quantity, 0)})
-        </Button>
+        </Button> */}
 
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -117,10 +117,26 @@ const App = () => {
           <Route path="/movie" element={<Movie />} />
           <Route path="/contactus" element={<ContactUs />} />
           {!authCtx.isLoggedIn && <Route path="/auth" element={<AuthForm />} />}
-          {authCtx.isLoggedIn && <Route path="/profile" element={<ProfileForm />} />}
+          {authCtx.isLoggedIn && (
+            <>
+              <Route path="/profile" element={<ProfileForm />} />
+              <Route path="/" element={<Navigate to="/products" />} />
+              <Route path="/cart" element={<Cart cartItems={cartItems} handleClose={handleCloseCart} />} />
+            </>
+          )}
           {!authCtx.isLoggedIn && <Route path="/profile" element={<Navigate to="/auth" replace />} />}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/products" replace />} />
         </Routes>
+
+        {authCtx.isLoggedIn && (
+          <Button
+            variant="success"
+            className="position-fixed top-0 end-0 m-4"
+            onClick={handleCartClick}
+          >
+            Cart ({cartItems.reduce((total, item) => total + item.quantity, 0)})
+          </Button>
+        )}
 
         {showCart && (
           <Cart cartItems={cartItems} handleClose={handleCloseCart} />

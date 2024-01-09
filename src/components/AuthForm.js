@@ -1,15 +1,15 @@
 import { useState, useRef, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 import classes from './AuthForm.module.css'
 import AuthContext from '../store/auth-context';
+import { useNavigate } from 'react-router-dom';
 const AuthForm = () => {
-  const nagivate = useNavigate();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const authCtx = useContext(AuthContext);
+  const nagivate = useNavigate();
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -22,6 +22,7 @@ const AuthForm = () => {
     const enteredPassword = passwordInputRef.current.value;
 
     //OPTIONAL: VALIDATION
+    
 
     setIsLoading(true);
     let url;
@@ -58,7 +59,7 @@ const AuthForm = () => {
       }
     }).then((data) => {
       authCtx.login(data.idToken);
-      nagivate('/');
+      nagivate('/products');
     })
       .catch((err) => {
         alert(err.message);
