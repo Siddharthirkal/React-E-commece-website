@@ -103,12 +103,14 @@ const App = () => {
           <Route path="/home" element={<Home />} />
           <Route
             path="/products"
-            element={
+            element={ authCtx.isLoggedIn ? (
               <Products
                 products={productsArr}
                 handleAddToCart={handleAddToCart}
               />
-            }
+            ) : (
+              <Navigate to="/auth" />
+            )}
           />
           <Route
             path="/products/:productId"
